@@ -1,0 +1,33 @@
+*&---------------------------------------------------------------------*
+*& Report Z_LER_TAB_FUNC2
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_ler_tab_func2.
+
+TABLES: zfuncionario.
+
+DATA: it_func     TYPE TABLE OF zfuncionario,
+      t_alv_table TYPE REF TO cl_salv_table,
+      lv_mat TYPE zfuncionario-matricula.
+
+SELECTION-SCREEN BEGIN OF BLOCK bl01 WITH FRAME TITLE TEXT-001.
+PARAMETERS: p_mat LIKE lv_mat MATCHCODE OBJECT z_tbfunc.
+SELECTION-SCREEN END OF BLOCK bl01.
+
+START-OF-SELECTION.
+
+  SELECT *
+    FROM zfuncionario
+    INTO TABLE it_func
+    WHERE matricula = p_mat.
+
+  cl_salv_table=>factory(
+  IMPORTING
+    r_salv_table = t_alv_table
+    CHANGING
+      t_table = it_func
+      ).
+  CALL METHOD t_alv_table->display.
+
+END-OF-SELECTION.
